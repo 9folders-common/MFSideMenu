@@ -141,8 +141,8 @@ typedef enum {
             [(UIScrollView *)_rightSideMenuViewController.view setContentInset:insets];
         }
     }
+    [self.shadow draw];
 }
-
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
     if (self.centerViewController) {
@@ -158,7 +158,7 @@ typedef enum {
 #pragma mark -
 #pragma mark - UIViewController Rotation
 
--(NSUInteger)supportedInterfaceOrientations {
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
     if (self.centerViewController) {
         if ([self.centerViewController isKindOfClass:[UINavigationController class]]) {
             return [((UINavigationController *)self.centerViewController).topViewController supportedInterfaceOrientations];
@@ -344,7 +344,7 @@ typedef enum {
 }
 
 - (void)setMenuState:(MFSideMenuState)menuState {
-    [self setMenuState:menuState completion:nil];
+    [self setMenuState:menuState completion:NULL];
 }
 
 - (void)setMenuState:(MFSideMenuState)menuState completion:(void (^)(void))completion {
@@ -491,7 +491,7 @@ typedef enum {
         [self alignLeftMenuControllerWithCenterViewController];
     };
     
-    [self setCenterViewControllerOffset:offset additionalAnimations:effects animated:animated completion:nil];
+    [self setCenterViewControllerOffset:offset additionalAnimations:effects animated:animated completion:NULL];
 }
 
 - (void)setRightMenuWidth:(CGFloat)rightMenuWidth animated:(BOOL)animated {
@@ -507,7 +507,7 @@ typedef enum {
         [self alignRightMenuControllerWithCenterViewController];
     };
     
-    [self setCenterViewControllerOffset:offset additionalAnimations:effects animated:animated completion:nil];
+    [self setCenterViewControllerOffset:offset additionalAnimations:effects animated:animated completion:NULL];
 }
 
 
@@ -547,7 +547,7 @@ typedef enum {
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
     if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
         CGPoint velocity = [(UIPanGestureRecognizer *)gestureRecognizer velocityInView:gestureRecognizer.view];
-        BOOL isHorizontalPanning = fabsf(velocity.x) > fabsf(velocity.y);
+        BOOL isHorizontalPanning = fabs(velocity.x) > fabs(velocity.y);
         return isHorizontalPanning;
     }
     return YES;
@@ -621,8 +621,10 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
         // we are opening the menu
         translatedPoint.x = MAX(translatedPoint.x, 0);
     }
-    
-    if(recognizer.state == UIGestureRecognizerStateEnded) {
+    UIGestureRecognizerState state = recognizer.state;
+    if(state == UIGestureRecognizerStateEnded
+       || state == UIGestureRecognizerStateCancelled
+       || state == UIGestureRecognizerStateFailed) {
         CGPoint velocity = [recognizer velocityInView:view];
         CGFloat finalX = translatedPoint.x + (.35*velocity.x);
         CGFloat viewWidth = view.frame.size.width;
@@ -634,7 +636,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
                 [self setMenuState:MFSideMenuStateLeftMenuOpen];
             } else {
                 self.panGestureVelocity = 0;
-                [self setCenterViewControllerOffset:0 animated:YES completion:nil];
+                [self setCenterViewControllerOffset:0 animated:YES completion:NULL];
             }
         } else {
             BOOL hideMenu = (finalX > adjustedOrigin.x);
@@ -643,7 +645,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
                 [self setMenuState:MFSideMenuStateClosed];
             } else {
                 self.panGestureVelocity = 0;
-                [self setCenterViewControllerOffset:adjustedOrigin.x animated:YES completion:nil];
+                [self setCenterViewControllerOffset:adjustedOrigin.x animated:YES completion:NULL];
             }
         }
         
@@ -675,7 +677,10 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
     
     [self setCenterViewControllerOffset:translatedPoint.x];
     
-	if(recognizer.state == UIGestureRecognizerStateEnded) {
+    UIGestureRecognizerState state = recognizer.state;
+    if(state == UIGestureRecognizerStateEnded
+       || state == UIGestureRecognizerStateCancelled
+       || state == UIGestureRecognizerStateFailed) {
         CGPoint velocity = [recognizer velocityInView:view];
         CGFloat finalX = translatedPoint.x + (.35*velocity.x);
         CGFloat viewWidth = view.frame.size.width;
@@ -687,7 +692,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
                 [self setMenuState:MFSideMenuStateRightMenuOpen];
             } else {
                 self.panGestureVelocity = 0;
-                [self setCenterViewControllerOffset:0 animated:YES completion:nil];
+                [self setCenterViewControllerOffset:0 animated:YES completion:NULL];
             }
         } else {
             BOOL hideMenu = (finalX < adjustedOrigin.x);
@@ -696,7 +701,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
                 [self setMenuState:MFSideMenuStateClosed];
             } else {
                 self.panGestureVelocity = 0;
-                [self setCenterViewControllerOffset:adjustedOrigin.x animated:YES completion:nil];
+                [self setCenterViewControllerOffset:adjustedOrigin.x animated:YES completion:NULL];
             }
         }
 	} else {
