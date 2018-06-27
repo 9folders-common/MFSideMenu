@@ -348,11 +348,11 @@ typedef enum {
 }
 
 - (void)setMenuState:(MFSideMenuState)menuState completion:(void (^)(void))completion {
-    void (^innerCompletion)() = ^ {
-        _menuState = menuState;
+    void (^innerCompletion)(void) = ^ {
+        self->_menuState = menuState;
         
         [self setUserInteractionStateForCenterViewController];
-        MFSideMenuStateEvent eventType = (_menuState == MFSideMenuStateClosed) ? MFSideMenuStateEventMenuDidClose : MFSideMenuStateEventMenuDidOpen;
+        MFSideMenuStateEvent eventType = (self->_menuState == MFSideMenuStateClosed) ? MFSideMenuStateEventMenuDidClose : MFSideMenuStateEventMenuDidOpen;
         [self sendStateEventNotification:eventType];
         
         if(completion) completion();
@@ -487,7 +487,7 @@ typedef enum {
     }
     
     CGFloat offset = _leftMenuWidth;
-    void (^effects)() = ^ {
+    void (^effects)(void) = ^ {
         [self alignLeftMenuControllerWithCenterViewController];
     };
     
@@ -503,7 +503,7 @@ typedef enum {
     }
     
     CGFloat offset = -1*rightMenuWidth;
-    void (^effects)() = ^ {
+    void (^effects)(void) = ^ {
         [self alignRightMenuControllerWithCenterViewController];
     };
     
@@ -737,7 +737,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
                  additionalAnimations:(void (^)(void))additionalAnimations
                              animated:(BOOL)animated
                            completion:(void (^)(void))completion {
-    void (^innerCompletion)() = ^ {
+    void (^innerCompletion)(void) = ^ {
         self.panGestureVelocity = 0.0;
         if(completion) completion();
     };

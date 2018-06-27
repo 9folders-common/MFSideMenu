@@ -30,7 +30,7 @@
 #pragma mark - UITableViewDataSource
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    return [NSString stringWithFormat:@"Section %d", section];
+    return [NSString stringWithFormat:@"Section %@", @(section)];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -50,7 +50,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     
-    cell.textLabel.text = [NSString stringWithFormat:@"Item %d", indexPath.row];
+    cell.textLabel.text = [NSString stringWithFormat:@"Item %@", @(indexPath.row)];
     
     return cell;
 }
@@ -61,7 +61,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     DemoViewController *demoController = [[DemoViewController alloc] initWithNibName:@"DemoViewController" bundle:nil];
-    demoController.title = [NSString stringWithFormat:@"Demo #%d-%d", indexPath.section, indexPath.row];
+    demoController.title = [NSString stringWithFormat:@"Demo #%@-%@", @(indexPath.section), @(indexPath.row)];
     
     UINavigationController *navigationController = self.menuContainerViewController.centerViewController;
     NSArray *controllers = [NSArray arrayWithObject:demoController];
